@@ -1,0 +1,5 @@
+body { font-family: system-ui, Arial; margin: 0; padding: 0; }
+.app header { padding: 12px; background: #f7f7f7; display:flex; justify-content:space-between; align-items:center }
+main { display:flex; gap: 12px; padding: 12px }
+.chart { flex: 1 }
+aside { width: 320px; overflow:auto; background:#fff; border-left:1px solid #eee; padding:12px }

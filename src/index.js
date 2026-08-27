@@ -18,8 +18,10 @@ wss.on('connection', (ws) => {
   ws.send(JSON.stringify({ type: 'hello', version: '0.1.0' }));
 });
 
-// simple in-memory watchlist; in production persist this
-let watchlist = ['SAMPLE'];
+// default watchlist provided by user
+let watchlist = [
+  'KOTAJK','TPIAJK','BRMSJK','BULLJK','DSSAJK','PSABJK','MBMAJK'
+];
 
 app.post('/watch', (req, res) => {
   const { symbol } = req.body;
@@ -29,6 +31,24 @@ app.post('/watch', (req, res) => {
 });
 
 app.get('/health', (req, res) => res.send({ ok: true }));
+
+// API endpoint for frontend to fetch candles in lightweight format
+app.get('/api/candles', async (req, res) => {
+  try {
+    const symbol = req.query.symbol;
+    const tf = req.query.tf || '5m';
+    if (!symbol) return res.status(400).send({ error: 'symbol required' });
+    const provider = createProvider(config.PROVIDER_TYPE);
+    const candles = await provider.getRecentCandles(symbol, tf, 500);
+    // map to lightweight-charts / tradingview format: time in YYYY-MM-DD or unix seconds
+    // we'll return time in ISO 8601 (ms -> ISO)
+    const out = candles.map(c => ({ time: new Date(c.time).toISOString(), open: c.open, high: c.high, low: c.low, close: c.close, volume: c.volume }));
+    res.send(out);
+  } catch (err) {
+    console.error('GET /api/candles error', err && err.message);
+    res.status(500).send({ error: err.message });
+  }
+});
 
 async function broadcast(msg) {
   const payload = JSON.stringify(msg);
