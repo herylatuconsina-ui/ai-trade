@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import TVChart from './components/TVChart';
+import Chart from './components/Chart';
 import './App.css';
 
 const DEFAULT_SYMBOL = 'KOTAJK';
@@ -11,7 +11,7 @@ function App(){
   return (
     <div className="app">
       <header>
-        <h2>AI Trade - TradingView Frontend (Prototype)</h2>
+        <h2>AI Trade - Chart Prototype</h2>
         <div>
           <label>Symbol: </label>
           <input value={symbol} onChange={e => setSymbol(e.target.value)} />
@@ -19,7 +19,7 @@ function App(){
       </header>
       <main>
         <div className="chart">
-          <TVChart symbol={symbol} onSignal={msg => setWsMessages(m => [msg, ...m].slice(0,50))} />
+          <Chart symbol={symbol} timeframe={'5m'} onSignal={msg => setWsMessages(m => [msg, ...m].slice(0,50))} />
         </div>
         <aside>
           <h3>Signals</h3>
